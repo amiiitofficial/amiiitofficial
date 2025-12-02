@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Download Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f1f1f1;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #a0a0c0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .app-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+        }
+        
+        .app-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        .app-icon {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+        }
+        
+        .app-icon img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .app-card:hover .app-icon img {
+            transform: scale(1.1);
+        }
+        
+        .app-info {
+            padding: 20px;
+        }
+        
+        .app-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+        
+        .app-description {
+            color: #b0b0d0;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        /* Download Page Styles */
+        .download-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        
+        .download-container {
+            background: linear-gradient(145deg, #1e1e3a, #2a2a4a);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .download-header {
+            padding: 25px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .download-app-name {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+        
+        .download-version {
+            color: #a0a0c0;
+            font-size: 0.9rem;
+        }
+        
+        .download-body {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .download-icon {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            padding: 15px;
+        }
+        
+        .download-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 15px;
+        }
+        
+        .download-details {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        
+        .download-description {
+            color: #d0d0e0;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+        
+        .download-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat {
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #00dbde;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            color: #a0a0c0;
+            margin-top: 5px;
+        }
+        
+        .download-button {
+            background: linear-gradient(90deg, #00dbde, #fc00ff);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0, 219, 222, 0.3);
+        }
+        
+        .download-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 219, 222, 0.4);
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #8080a0;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 30px;
+        }
+        
+        /* Folder Structure Info */
+        .folder-structure {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid #00dbde;
+        }
+        
+        .folder-structure h3 {
+            color: #00dbde;
+            margin-bottom: 15px;
+        }
+        
+        .folder-structure pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            color: #a0ffa0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .apps-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .download-container {
+                max-width: 90%;
+            }
+            
+            .download-stats {
+                gap: 10px;
+            }
+            
+            .stat {
+                min-width: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>App Download Center</h1>
+            <p class="tagline">Discover amazing apps for productivity, creativity, and entertainment. Click any app to download.</p>
+        </header>
+        
+        <div class="apps-grid" id="appsGrid">
+            <!-- App cards will be inserted here by JavaScript -->
+        </div>
+        
+        <!-- Folder Structure Information -->
+        <div class="folder-structure">
+            <h3>Secure System :</h3>
+            <p>Get Download Any Apps :</p>
+            <pre>
+                You Are Safe ✅ 
+                Security Activited ✅
+            </pre>
+        </div>
+        
+        <footer>
+            <p>© 2023 App Download Center. All apps are property of their respective owners.</p>
+            <p>All downloads are secure and virus-free.</p>
+        </footer>
+    </div>
+    
+    <!-- Download Page -->
+    <div class="download-page" id="downloadPage">
+        <div class="download-container">
+            <div class="download-header">
+                <h2 class="download-app-name" id="downloadAppName">App Name</h2>
+                <p class="download-version" id="downloadVersion">Version 1.0.0</p>
+            </div>
+            
+            <div class="download-body">
+                <div class="download-icon">
+                    <img id="downloadIcon" src="" alt="App Icon">
+                </div>
+                
+                <div class="download-details">
+                    <p class="download-description" id="downloadDescription">App description goes here.</p>
+                    
+                    <div class="download-stats">
+                        <div class="stat">
+                            <div class="stat-value" id="downloadSize">85 MB</div>
+                            <div class="stat-label">Size</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="downloadRating">4.8</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="downloadDownloads">10K+</div>
+                            <div class="stat-label">Downloads</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="download-button" id="downloadBtn">
+                    <i class="fas fa-download"></i> Download Now
+                </button>
+            </div>
+        </div>
+        
+        <button class="close-button" id="closeBtn">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <script>
+        // App data with LOCAL PNG Image paths
+        const apps = [
+            {
+                id: 1,
+                name: "WhatsApp",
+                description: "Free messaging and calling app. Send text messages, voice messages, make voice and video calls.",
+                icon: "images/picsart.png", // Local PNG file
+                version: "2.23.10",
+                size: "95 MB",
+                rating: "4.8",
+                downloads: "5B+",
+                downloadLink: "https://apps.getmodpc.net/Picsart/Picsart_Premium_Gold_v29.7.0_Modded_by_@Getmodpc.net.apk" // Your actual download link
+            },
+            {
+                id: 2,
+                name: "Instagram",
+                description: "Share photos and videos, connect with friends, and discover amazing content from around the world.",
+                icon: "images/instagram.png", // Local PNG file
+                version: "285.0",
+                size: "110 MB",
+                rating: "4.7",
+                downloads: "2B+",
+                downloadLink: "downloads/instagram.zip"
+            },
+            {
+                id: 3,
+                name: "YouTube",
+                description: "Watch and upload videos, subscribe to channels, and enjoy content from creators worldwide.",
+                icon: "images/youtube.png", // Local PNG file
+                version: "18.45.40",
+                size: "125 MB",
+                rating: "4.9",
+                downloads: "5B+",
+                downloadLink: "downloads/youtube.zip"
+            },
+            {
+                id: 4,
+                name: "Adobe Photoshop",
+                description: "Professional photo editing software with advanced tools for designers and photographers.",
+                icon: "images/photoshop.png", // Local PNG file
+                version: "24.7.0",
+                size: "2.5 GB",
+                rating: "4.8",
+                downloads: "50M+",
+                downloadLink: "downloads/photoshop.zip"
+            },
+            {
+                id: 5,
+                name: "Spotify",
+                description: "Stream millions of songs, create playlists, and discover new music and podcasts.",
+                icon: "images/spotify.png", // Local PNG file
+                version: "8.8.52",
+                size: "85 MB",
+                rating: "4.7",
+                downloads: "1B+",
+                downloadLink: "downloads/spotify.zip"
+            },
+            {
+                id: 6,
+                name: "Microsoft Word",
+                description: "Create, edit, and share documents with the world's most popular word processor.",
+                icon: "images/word.png", // Local PNG file
+                version: "16.0",
+                size: "2.1 GB",
+                rating: "4.6",
+                downloads: "500M+",
+                downloadLink: "downloads/word.zip"
+            }
+        ];
+        
+        // Default image path if local image is missing
+        const DEFAULT_IMAGE = "images/default-app.png";
+        
+        // DOM Elements
+        const appsGrid = document.getElementById('appsGrid');
+        const downloadPage = document.getElementById('downloadPage');
+        const closeBtn = document.getElementById('closeBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        
+        // Elements to update in download page
+        const downloadAppName = document.getElementById('downloadAppName');
+        const downloadVersion = document.getElementById('downloadVersion');
+        const downloadIcon = document.getElementById('downloadIcon');
+        const downloadDescription = document.getElementById('downloadDescription');
+        const downloadSize = document.getElementById('downloadSize');
+        const downloadRating = document.getElementById('downloadRating');
+        const downloadDownloads = document.getElementById('downloadDownloads');
+        
+        // Variable to store current app being viewed
+        let currentApp = null;
+        
+        // Function to handle image loading errors
+        function handleImageError(imgElement, appName) {
+            console.log(`Image not found for ${appName}, using default image`);
+            imgElement.src = DEFAULT_IMAGE;
+            imgElement.alt = `${appName} - Default Icon`;
+        }
+        
+        // Create app cards with LOCAL PNG images
+        function createAppCards() {
+            appsGrid.innerHTML = '';
+            
+            apps.forEach(app => {
+                const appCard = document.createElement('div');
+                appCard.className = 'app-card';
+                appCard.setAttribute('data-app-id', app.id);
+                
+                appCard.innerHTML = `
+                    <div class="app-icon">
+                        <img src="${app.icon}" alt="${app.name}" 
+                             onerror="this.src='${DEFAULT_IMAGE}'">
+                    </div>
+                    <div class="app-info">
+                        <h3 class="app-name">${app.name}</h3>
+                        <p class="app-description">${app.description}</p>
+                    </div>
+                `;
+                
+                // Add click event
+                appCard.addEventListener('click', () => openDownloadPage(app));
+                appsGrid.appendChild(appCard);
+                
+                // Pre-check image availability
+                const img = new Image();
+                img.src = app.icon;
+                img.onerror = () => {
+                    console.warn(`Image not found: ${app.icon} for ${app.name}`);
+                };
+            });
+        }
+        
+        // Open download page with app details
+        function openDownloadPage(app) {
+            currentApp = app;
+            
+            // Update download page with app details
+            downloadAppName.textContent = app.name;
+            downloadVersion.textContent = `Version ${app.version}`;
+            
+            // Set image with error handling
+            downloadIcon.src = app.icon;
+            downloadIcon.alt = app.name;
+            downloadIcon.onerror = () => {
+                downloadIcon.src = DEFAULT_IMAGE;
+                downloadIcon.alt = `${app.name} - Default Icon`;
+            };
+            
+            downloadDescription.textContent = app.description;
+            downloadSize.textContent = app.size;
+            downloadRating.textContent = app.rating;
+            downloadDownloads.textContent = app.downloads;
+            
+            // Show download page
+            downloadPage.style.display = 'flex';
+            
+            // Reset download button
+            resetDownloadButton();
+        }
+        
+        // Reset download button to original state
+        function resetDownloadButton() {
+            downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download Now';
+            downloadBtn.style.background = 'linear-gradient(90deg, #00dbde, #fc00ff)';
+            downloadBtn.style.boxShadow = '0 5px 15px rgba(0, 219, 222, 0.3)';
+            downloadBtn.disabled = false;
+        }
+        
+        // Close download page
+        function closeDownloadPage() {
+            downloadPage.style.display = 'none';
+            currentApp = null;
+        }
+        
+        // Handle download button click
+        function handleDownload() {
+            if (!currentApp) return;
+            
+            // Disable button to prevent multiple clicks
+            downloadBtn.disabled = true;
+            
+            // Create a temporary anchor element to trigger download
+            const link = document.createElement('a');
+            link.href = currentApp.downloadLink;
+            link.download = currentApp.name.replace(/\s+/g, '-').toLowerCase() + '.zip';
+            
+            // For demo purposes - simulate download
+            // In real scenario, this will actually download the file
+            console.log(`Starting download: ${currentApp.name} from ${currentApp.downloadLink}`);
+            
+            // Add to document and click
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show success message
+            downloadBtn.innerHTML = '<i class="fas fa-check"></i> Download Started!';
+            downloadBtn.style.background = 'linear-gradient(90deg, #00de6d, #00c8a0)';
+            downloadBtn.style.boxShadow = '0 5px 15px rgba(0, 222, 109, 0.3)';
+            
+            // Re-enable button after 3 seconds
+            setTimeout(() => {
+                resetDownloadButton();
+                
+                // Optional: Close download page after successful download
+                // closeDownloadPage();
+            }, 3000);
+        }
+        
+        // Event listeners
+        closeBtn.addEventListener('click', closeDownloadPage);
+        downloadBtn.addEventListener('click', handleDownload);
+        
+        // Close download page when clicking outside the container
+        downloadPage.addEventListener('click', (e) => {
+            if (e.target === downloadPage) {
+                closeDownloadPage();
+            }
+        });
+        
+        // Add keyboard support (Escape to close)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && downloadPage.style.display === 'flex') {
+                closeDownloadPage();
+            }
+        });
+        
+        // Initialize the app
+        function init() {
+            createAppCards();
+            
+            // Check if images folder exists
+            console.log('App initialized. Make sure you have an "images" folder with PNG files.');
+            console.log('Required PNG files:');
+            apps.forEach(app => {
+                console.log(`- ${app.icon}`);
+            });
+        }
+        
+        // Start the app when page loads
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
